@@ -1,29 +1,35 @@
-//
-//  StoreData.swift
-//  To do list
-//
-//  Created by Shahad Al-deewan on 2023-08-01.
-//
-
 import SwiftUI
+import Combine
 
 class StoreData: ObservableObject {
     @Published var todos: [ToDoList] = []
+
     init() {
         loadToDoList()
     }
-    func addToDoList(_todos:ToDoList) {
-        
+
+    func addTask(_ task: ToDoList) {
+        todos.append(task)
+        saveToDoList()
     }
-    func deleteToDoList(at indexSet: IndexSet){
-        
-    }
-    func loadToDoList() {
-        todos = ToDoList.sampleData
-    
-        func saveToDoList() {
-            print("Save ToDoList to file system")
+
+    func updateToDoList(_ toDoList: ToDoList) {
+        if let index = todos.firstIndex(where: { $0.id == toDoList.id }) {
+            todos[index] = toDoList
+            saveToDoList()
         }
-        
+    }
+
+    func deleteToDoList(at indexSet: IndexSet) {
+        todos.remove(atOffsets: indexSet)
+        saveToDoList()
+    }
+
+    private func loadToDoList() {
+         todos = ToDoList.sampleData
+    }
+
+    private func saveToDoList() {
+         print("Save ToDoList to file system")
     }
 }
