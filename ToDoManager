@@ -1,0 +1,32 @@
+import SwiftUI
+
+class ToDoManager: ObservableObject {
+    @Published var toDoList: [ToDoList] = []
+    
+    init() {
+         
+        if let data = UserDefaults.standard.data(forKey: "toDoItems") {
+            let decoder = JSONDecoder()
+            if let decodedData = try? decoder.decode([ToDoList].self, from: data) {
+                toDoList = decodedData
+            }
+        }
+    }
+    
+    func addTask(_ task: ToDoList) {
+        toDoList.append(task)
+        saveToUserDefaults()
+    }
+    
+    func removeTask(at index: Int) {
+        toDoList.remove(at: index)
+        saveToUserDefaults()
+    }
+    
+    private func saveToUserDefaults() {
+        let encoder = JSONEncoder()
+        if let encodedData = try? encoder.encode(toDoList) {
+            UserDefaults.standard.set(encodedData, forKey: "toDoItems")
+        }
+    }
+}
